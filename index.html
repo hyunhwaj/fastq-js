@@ -179,7 +179,10 @@ function computeBoxData(array) {
 }
 
 function parseFile(file){
-	if(file.name.split('.')[1] != "fastq" && file.name.split('.')[1] != "fq") {
+	var ext = "";
+	var filename = file.name.split('.');
+	ext = filename[filename.length-1];
+	if(ext != "fastq" && ext != "fq") {
 		console.log("Please select a fastq file");
 		return true;
 	}
@@ -193,6 +196,7 @@ function parseFile(file){
 	var parseBlock = false;
 	var readCount = 0;
 
+	var t1 = performance.now();
 	var parseChunk = function(text){
 		//console.log("chunk: "+text.target.result);
 		var splitResult = text.target.result.split(/\r?\n/); //split at new lines
@@ -218,6 +222,8 @@ function parseFile(file){
 		}
 		if(start >= file.size) {
 			//console.log(readCount+" reads"); //total reads in file
+			var t2 = performance.now();
+			console.log(t2-t1);
 			done();
 		} else {
 			nextChunk();
@@ -265,11 +271,6 @@ function parseFile(file){
 <script>
 var holder = document.getElementById('holder');
 
-if (typeof window.FileReader === 'undefined') {
-	holder.innerHTML = '<p id="noSupport">Not supported with your browser</p>';
-	return true;
-}
- 
 holder.ondragover = function () {
 	this.className = 'hover';
 	return false;
